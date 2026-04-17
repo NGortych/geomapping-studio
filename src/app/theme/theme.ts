@@ -12,7 +12,7 @@ export const appTheme = createTheme({
     },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 12,
   },
   typography: {
     fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(","),

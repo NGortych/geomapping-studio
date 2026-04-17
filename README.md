@@ -71,3 +71,7 @@ export default defineConfig([
   },
 ])
 ```
+geoJSON examples:
+https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
+https://opendata.arcgis.com/api/v3/datasets/b5f660b9f0f44ced915995b6d49f6385_0/downloads/data?format=geojson&spatialRefId=4326&where=1%3D1
+https://api.weather.gov/alerts/active

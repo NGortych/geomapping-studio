@@ -1,5 +1,5 @@
-import { DeckGL } from "deck.gl";
-import type { MapViewState } from "@deck.gl/core";
+import { DeckGL } from "@deck.gl/react";
+import type { LayersList, MapViewState } from "@deck.gl/core";
 import { Paper } from "@mui/material";
 import maplibregl from "maplibre-gl";
 import Map from "react-map-gl/maplibre";
@@ -10,9 +10,14 @@ import { openStreetMapStyle } from "../config/baseMapStyle";
 type MapCanvasProps = {
   viewport: MapViewport;
   onViewportChange: (viewport: MapViewport) => void;
+  layers?: LayersList;
 };
 
-export function MapCanvas({ viewport, onViewportChange }: MapCanvasProps) {
+export function MapCanvas({
+  viewport,
+  onViewportChange,
+  layers = [],
+}: MapCanvasProps) {
   return (
     <Paper
       elevation={0}
@@ -26,6 +31,7 @@ export function MapCanvas({ viewport, onViewportChange }: MapCanvasProps) {
     >
       <DeckGL
         controller
+        layers={layers}
         viewState={viewport as MapViewState}
         onViewStateChange={({ viewState }) => {
           if (!isMapViewportState(viewState)) {
