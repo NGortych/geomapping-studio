@@ -53,7 +53,7 @@ export function MapCanvas({
 }
 
 function isMapViewportState(
-  viewState: MapViewState | Record<string, unknown>
+  viewState: MapViewState | Record<string, unknown>,
 ): viewState is MapViewState {
   return (
     typeof viewState.longitude === "number" &&

@@ -8,9 +8,7 @@ type UseGeoJsonImportOptions = {
   onImportSuccess: (features: Feature[]) => void;
 };
 
-export function useGeoJsonImport({
-  onImportSuccess,
-}: UseGeoJsonImportOptions) {
+export function useGeoJsonImport({ onImportSuccess }: UseGeoJsonImportOptions) {
   const [sourceUrl, setSourceUrl] = useState("");
   const [status, setStatus] = useState<GeoJsonImportStatus>({ state: "idle" });
 

@@ -1,10 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Alert, Box, Button, Stack, TextField } from "@mui/material";
 
 import type { GeoJsonImportStatus } from "../model/types";
 
@@ -35,11 +29,7 @@ export function GeoJsonImportControl({
           onChange={(event) => onSourceUrlChange(event.target.value)}
           disabled={isLoading}
         />
-        <Button
-          variant="contained"
-          onClick={onImport}
-          disabled={isLoading}
-        >
+        <Button variant="contained" onClick={onImport} disabled={isLoading}>
           Import
         </Button>
       </Box>

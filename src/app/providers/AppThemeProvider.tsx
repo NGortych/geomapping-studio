@@ -2,13 +2,13 @@ import {
   CssBaseline,
   ThemeProvider,
   type ThemeProviderProps,
-} from '@mui/material'
+} from "@mui/material";
 
-import { appTheme } from '../theme/theme'
+import { appTheme } from "../theme/theme";
 
 type AppThemeProviderProps = {
-  children: ThemeProviderProps['children']
-}
+  children: ThemeProviderProps["children"];
+};
 
 export function AppThemeProvider({ children }: AppThemeProviderProps) {
   return (
@@ -16,5 +16,5 @@ export function AppThemeProvider({ children }: AppThemeProviderProps) {
       <CssBaseline />
       {children}
     </ThemeProvider>
-  )
+  );
 }

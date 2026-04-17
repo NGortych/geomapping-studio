@@ -52,7 +52,7 @@ export async function importGeoJsonFromUrl(
     }
 
     return { features };
-  } catch (error) {
+  } catch {
     throw new Error("Invalid data.");
   }
 }
@@ -143,12 +143,12 @@ function createImportedFeatureId(
   rawId: string | number | undefined,
   index: number,
 ) {
-  return rawId === undefined ? `imported-${index}` : `imported-${String(rawId)}`;
+  return rawId === undefined
+    ? `imported-${index}`
+    : `imported-${String(rawId)}`;
 }
 
-function isSupportedGeometryType(
-  value: unknown,
-): value is GeoType {
+function isSupportedGeometryType(value: unknown): value is GeoType {
   return (
     value === "Point" ||
     value === "MultiPoint" ||
@@ -164,7 +164,9 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 function isNumberArray(value: unknown): value is number[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "number");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "number")
+  );
 }
 
 function isPosition(value: unknown): value is GeoPosition {
@@ -184,5 +186,7 @@ function isPolygonCoordinates(value: unknown): value is GeoPosition[][] {
 }
 
 function isMultiPolygonCoordinates(value: unknown): value is GeoPosition[][][] {
-  return Array.isArray(value) && value.every((item) => isPolygonCoordinates(item));
+  return (
+    Array.isArray(value) && value.every((item) => isPolygonCoordinates(item))
+  );
 }
