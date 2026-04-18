@@ -1,14 +1,16 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
 type StudioToolbarProps = {
   importControl?: ReactNode;
   drawingControls?: ReactNode;
+  exportControl?: ReactNode;
 };
 
 export function StudioToolbar({
   importControl,
   drawingControls,
+  exportControl,
 }: StudioToolbarProps) {
   return (
     <Box
@@ -29,19 +31,14 @@ export function StudioToolbar({
       </Stack>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-        {importControl}
-        {drawingControls}
         <Stack
           direction="row"
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}
         >
-          <Button disabled variant="outlined">
-            Test
-          </Button>
-          <Button disabled variant="outlined">
-            Test
-          </Button>
+          {importControl}
+          {drawingControls}
+          {exportControl}
         </Stack>
       </Box>
     </Box>
