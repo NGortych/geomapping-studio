@@ -4,25 +4,25 @@ import { GeoJsonLayer } from "@deck.gl/layers";
 import type { Feature } from "../../../entities/geo-feature/model/types";
 import { toFeatureCollection } from "../../../entities/geo-feature/utils/toFeatureCollection";
 
-export function useImportedGeoJsonLayer(importedFeatures: Feature[]) {
+export function useDrawnGeoJsonLayer(drawnFeatures: Feature[]) {
   return useMemo(() => {
-    if (importedFeatures.length === 0) {
+    if (drawnFeatures.length === 0) {
       return null;
     }
 
     return new GeoJsonLayer({
-      id: "ImportedGeojsonLayer",
-      data: toFeatureCollection(importedFeatures),
+      id: "DrawnGeojsonLayer",
+      data: toFeatureCollection(drawnFeatures),
       filled: true,
       stroked: false,
       pointType: "circle",
       pickable: false,
-      getFillColor: [255, 0, 0, 150],
-      getLineColor: [255, 0, 0, 220],
+      getFillColor: [25, 118, 210, 150],
+      getLineColor: [25, 118, 210, 220],
       getPointRadius: 6,
       getLineWidth: 10,
       lineWidthMinPixels: 3,
       pointRadiusMinPixels: 5,
     });
-  }, [importedFeatures]);
+  }, [drawnFeatures]);
 }

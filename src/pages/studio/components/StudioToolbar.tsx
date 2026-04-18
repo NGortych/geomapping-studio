@@ -3,9 +3,13 @@ import type { ReactNode } from "react";
 
 type StudioToolbarProps = {
   importControl?: ReactNode;
+  drawingControls?: ReactNode;
 };
 
-export function StudioToolbar({ importControl }: StudioToolbarProps) {
+export function StudioToolbar({
+  importControl,
+  drawingControls,
+}: StudioToolbarProps) {
   return (
     <Box
       sx={{
@@ -26,6 +30,7 @@ export function StudioToolbar({ importControl }: StudioToolbarProps) {
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
         {importControl}
+        {drawingControls}
         <Stack
           direction="row"
           spacing={1}

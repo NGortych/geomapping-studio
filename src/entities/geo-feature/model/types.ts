@@ -6,7 +6,7 @@ export type GeoType =
   | "Polygon"
   | "MultiPolygon";
 
-export type GeoPosition = [number, number] | [number, number, number];
+export type GeoPosition = [number, number];
 
 export type Geometry =
   | { type: "Point"; coordinates: GeoPosition }

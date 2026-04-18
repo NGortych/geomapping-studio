@@ -1,7 +1,12 @@
 import { Box, Container } from "@mui/material";
+import { useMemo } from "react";
 
 import { AppShell } from "../../app/layout/AppShell";
 import { useFeatureDataset } from "../../entities/geo-feature/hooks/useFeatureDataset";
+import { DrawingControls } from "../../features/drawing/components/DrawingControls";
+import { useDrawingController } from "../../features/drawing/hooks/useDrawingController";
+import { useDrawingPreviewLayers } from "../../features/drawing/hooks/useDrawingPreviewLayers";
+import { useDrawnGeoJsonLayer } from "../../features/drawing/hooks/useDrawnGeoJsonLayer";
 import { GeoJsonImportControl } from "../../features/geojson-import/components/GeoJsonImportControl";
 import { useGeoJsonImport } from "../../features/geojson-import/hooks/useGeoJsonImport";
 import { useImportedGeoJsonLayer } from "../../features/geojson-import/hooks/useImportedGeoJsonLayer";
@@ -11,11 +16,35 @@ import { StudioToolbar } from "./components/StudioToolbar";
 
 export function StudioPage() {
   const { viewport, handleViewportChange } = useMapViewport();
-  const { importedFeatures, setImportedFeatures } = useFeatureDataset();
+  const { importedFeatures, drawnFeatures, setImportedFeatures, addDrawnFeature } =
+    useFeatureDataset();
   const importedGeoJsonLayer = useImportedGeoJsonLayer(importedFeatures);
+  const drawnGeoJsonLayer = useDrawnGeoJsonLayer(drawnFeatures);
   const { sourceUrl, setSourceUrl, status, handleImport } = useGeoJsonImport({
     onImportSuccess: setImportedFeatures,
   });
+  const {
+    positions,
+    canFinish,
+    isDrawing,
+    startDrawing,
+    cancelDrawing,
+    addPoint,
+    finishDrawing,
+  } = useDrawingController({
+    onDrawComplete: addDrawnFeature,
+  });
+  const drawingPreviewLayers = useDrawingPreviewLayers({
+    isDrawing,
+    positions,
+  });
+  const mapLayers = useMemo(
+    () =>
+      [importedGeoJsonLayer, drawnGeoJsonLayer, ...drawingPreviewLayers].filter(
+        Boolean,
+      ),
+    [drawnGeoJsonLayer, drawingPreviewLayers, importedGeoJsonLayer],
+  );
 
   return (
     <AppShell
@@ -27,6 +56,16 @@ export function StudioPage() {
               status={status}
               onSourceUrlChange={setSourceUrl}
               onImport={handleImport}
+            />
+          }
+          drawingControls={
+            <DrawingControls
+              isDrawing={isDrawing}
+              pointCount={positions.length}
+              canFinish={canFinish}
+              onStartPolygon={startDrawing}
+              onFinish={finishDrawing}
+              onCancel={cancelDrawing}
             />
           }
         />
@@ -44,7 +83,9 @@ export function StudioPage() {
             <MapCanvas
               viewport={viewport}
               onViewportChange={handleViewportChange}
-              layers={importedGeoJsonLayer ? [importedGeoJsonLayer] : []}
+              onMapClick={addPoint}
+              isDrawing={isDrawing}
+              layers={mapLayers}
             />
           </Box>
         </Container>
