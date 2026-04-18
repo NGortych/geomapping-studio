@@ -5,12 +5,14 @@ type StudioToolbarProps = {
   importControl?: ReactNode;
   drawingControls?: ReactNode;
   exportControl?: ReactNode;
+  viewModeControl?: ReactNode;
 };
 
 export function StudioToolbar({
   importControl,
   drawingControls,
   exportControl,
+  viewModeControl,
 }: StudioToolbarProps) {
   return (
     <Box
@@ -36,6 +38,7 @@ export function StudioToolbar({
           spacing={1}
           sx={{ display: { xs: "none", md: "flex" } }}
         >
+          {viewModeControl}
           {importControl}
           {drawingControls}
           {exportControl}

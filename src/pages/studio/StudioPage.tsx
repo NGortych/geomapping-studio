@@ -1,5 +1,5 @@
 import { Box, Container } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { AppShell } from "../../app/layout/AppShell";
 import { useFeatureDataset } from "../../entities/geo-feature/hooks/useFeatureDataset";
@@ -14,13 +14,18 @@ import { useGeoJsonImport } from "../../features/geojson-import/hooks/useGeoJson
 import { useImportedGeoJsonLayer } from "../../features/geojson-import/hooks/useImportedGeoJsonLayer";
 import { MapCanvas } from "../../features/map/components/MapCanvas";
 import { useMapViewport } from "../../features/map/hooks/useMapViewport";
+import { TableView } from "../../features/table-view/components/TableView";
+import { ViewModeControl } from "../../features/table-view/components/ViewModeControl";
+import type { ViewMode } from "../../features/table-view/model/types";
 import { StudioToolbar } from "./components/StudioToolbar";
 
 export function StudioPage() {
+  const [viewMode, setViewMode] = useState<ViewMode>("map");
   const { viewport, handleViewportChange } = useMapViewport();
   const {
     importedFeatures,
     drawnFeatures,
+    allFeatures,
     setImportedFeatures,
     addDrawnFeature,
   } = useFeatureDataset();
@@ -57,6 +62,12 @@ export function StudioPage() {
     <AppShell
       header={
         <StudioToolbar
+          viewModeControl={
+            <ViewModeControl
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
+          }
           importControl={
             <GeoJsonImportControl
               sourceUrl={sourceUrl}
@@ -92,15 +103,21 @@ export function StudioPage() {
             py: { xs: 2, md: 3 },
           }}
         >
-          <Box sx={{ height: "calc(100dvh - 163px)", minHeight: 520 }}>
-            <MapCanvas
-              viewport={viewport}
-              onViewportChange={handleViewportChange}
-              onMapClick={addPoint}
-              isDrawing={isDrawing}
-              layers={mapLayers}
-            />
-          </Box>
+          {viewMode === "map" ? (
+            <Box sx={{ height: "calc(100dvh - 163px)", minHeight: 520 }}>
+              <MapCanvas
+                viewport={viewport}
+                onViewportChange={handleViewportChange}
+                onMapClick={addPoint}
+                isDrawing={isDrawing}
+                layers={mapLayers}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ height: "calc(100dvh - 163px)", minHeight: 520 }}>
+              <TableView features={allFeatures} />
+            </Box>
+          )}
         </Container>
       }
     />

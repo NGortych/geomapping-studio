@@ -143,9 +143,7 @@ function createImportedFeatureId(
   rawId: string | number | undefined,
   index: number,
 ) {
-  return rawId === undefined
-    ? `imported-${index}`
-    : `imported-${String(rawId)}`;
+  return rawId === undefined ? `imported-${index}` : String(rawId);
 }
 
 function isSupportedGeometryType(value: unknown): value is GeoType {
