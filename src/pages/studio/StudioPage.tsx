@@ -63,6 +63,7 @@ export function StudioPage() {
   } = useDrawingController({
     onDrawComplete: addDrawnFeature,
   });
+
   const controlsPanel = (
     <StudioControlPanel
       viewModeControl={
