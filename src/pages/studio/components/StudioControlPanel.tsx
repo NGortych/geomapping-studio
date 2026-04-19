@@ -58,7 +58,9 @@ function ControlSection({ title, description, children }: ControlSectionProps) {
       <Stack spacing={1.5}>
         <Box>
           <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
-          <Typography variant="body2">{description}</Typography>
+          {description && (
+            <Typography variant="body2">{description}</Typography>
+          )}
         </Box>
 
         {children}
