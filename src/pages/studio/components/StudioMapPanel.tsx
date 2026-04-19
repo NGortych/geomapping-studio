@@ -7,6 +7,7 @@ import type {
 } from "../../../entities/geo-feature/model/types";
 import { useDrawnGeoJsonLayer } from "../../../features/drawing/hooks/useDrawnGeoJsonLayer";
 import { useDrawingPreviewLayers } from "../../../features/drawing/hooks/useDrawingPreviewLayers";
+import { useSelectedGeoJsonLayer } from "../../../features/feature-selection/hooks/useSelectedGeoJsonLayer";
 import { useImportedGeoJsonLayer } from "../../../features/geojson-import/hooks/useImportedGeoJsonLayer";
 import { MapCanvas } from "../../../features/map/components/MapCanvas";
 import { useMapViewport } from "../../../features/map/hooks/useMapViewport";
@@ -18,6 +19,7 @@ import { MapInfoOverlay } from "./MapInfoOverlay";
 type StudioMapPanelProps = {
   importedFeatures: Feature[];
   drawnFeatures: Feature[];
+  selectedFeatures: Feature[];
   searchResult: SearchResult | null;
   isDrawingModeEnabled: boolean;
   canFinishDrawing: boolean;
@@ -31,6 +33,7 @@ type StudioMapPanelProps = {
 export function StudioMapPanel({
   importedFeatures,
   drawnFeatures,
+  selectedFeatures,
   searchResult,
   isDrawingModeEnabled,
   canFinishDrawing,
@@ -43,6 +46,7 @@ export function StudioMapPanel({
   const { viewport, handleViewportChange, focusViewport } = useMapViewport();
   const importedGeoJsonLayer = useImportedGeoJsonLayer(importedFeatures);
   const drawnGeoJsonLayer = useDrawnGeoJsonLayer(drawnFeatures);
+  const selectedGeoJsonLayer = useSelectedGeoJsonLayer(selectedFeatures);
   const drawingPreviewLayers = useDrawingPreviewLayers({
     isDrawing: isDrawingModeEnabled,
     positions: drawingPositions,
@@ -54,6 +58,7 @@ export function StudioMapPanel({
       [
         importedGeoJsonLayer,
         drawnGeoJsonLayer,
+        selectedGeoJsonLayer,
         searchResultLayer,
         ...drawingPreviewLayers,
       ].filter(Boolean),
@@ -61,6 +66,7 @@ export function StudioMapPanel({
       drawnGeoJsonLayer,
       drawingPreviewLayers,
       importedGeoJsonLayer,
+      selectedGeoJsonLayer,
       searchResultLayer,
     ],
   );

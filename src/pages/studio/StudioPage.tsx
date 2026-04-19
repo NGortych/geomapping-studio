@@ -1,13 +1,9 @@
-import {
-  Box,
-  Container,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { useState } from "react";
+import { Box, Container, useMediaQuery, useTheme } from "@mui/material";
+import { useMemo, useState } from "react";
 
 import { AppShell } from "../../app/layout/AppShell";
 import { useFeatureDataset } from "../../entities/geo-feature/hooks/useFeatureDataset";
+import type { Feature } from "../../entities/geo-feature/model/types";
 import { useDrawingController } from "../../features/drawing/hooks/useDrawingController";
 import { GeoJsonExportControl } from "../../features/geojson-export/components/GeoJsonExportControl";
 import { useGeoJsonExport } from "../../features/geojson-export/hooks/useGeoJsonExport";
@@ -29,6 +25,7 @@ export function StudioPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("map");
   const [isControlsDrawerOpen, setIsControlsDrawerOpen] = useState(false);
   const [isDesktopSidebarVisible, setIsDesktopSidebarVisible] = useState(true);
+  const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const {
     importedFeatures,
     drawnFeatures,
@@ -63,6 +60,21 @@ export function StudioPage() {
   } = useDrawingController({
     onDrawComplete: addDrawnFeature,
   });
+  const activeSelectedFeatureIds = useMemo(() => {
+    const allFeatureIds = new Set(allFeatures.map((feature) => feature.id));
+
+    return selectedFeatureIds.filter((featureId) =>
+      allFeatureIds.has(featureId),
+    );
+  }, [allFeatures, selectedFeatureIds]);
+
+  const selectedFeatures = useMemo<Feature[]>(
+    () =>
+      allFeatures.filter((feature) =>
+        activeSelectedFeatureIds.includes(feature.id),
+      ),
+    [activeSelectedFeatureIds, allFeatures],
+  );
 
   const controlsPanel = (
     <StudioControlPanel
@@ -165,6 +177,7 @@ export function StudioPage() {
                 <StudioMapPanel
                   importedFeatures={importedFeatures}
                   drawnFeatures={drawnFeatures}
+                  selectedFeatures={selectedFeatures}
                   searchResult={searchResult}
                   isDrawingModeEnabled={isDrawing}
                   canFinishDrawing={canFinish}
@@ -182,7 +195,11 @@ export function StudioPage() {
                       inset: 0,
                     }}
                   >
-                    <FeatureTableView features={allFeatures} />
+                    <FeatureTableView
+                      features={allFeatures}
+                      selectedFeatureIds={activeSelectedFeatureIds}
+                      onSelectedFeatureIdsChange={setSelectedFeatureIds}
+                    />
                   </Box>
                 ) : null}
               </Box>
