@@ -16,17 +16,20 @@ export function SearchControl({
   onSearch,
 }: SearchControlProps) {
   return (
-    <Stack spacing={1}>
-      <Stack direction="row" spacing={1}>
+    <Stack spacing={1.25} sx={{ width: "100%" }}>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
         <TextField
+          fullWidth
+          size="small"
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Search location"
         />
         <Button
-          variant="contained"
+          variant="outlined"
           onClick={onSearch}
           disabled={status.state === "loading" || !query}
+          sx={{ whiteSpace: "nowrap" }}
         >
           Search
         </Button>
@@ -34,7 +37,7 @@ export function SearchControl({
 
       {status.state === "error" && (
         <Box>
-          <Alert severity={"error"}>{status.message}</Alert>
+          <Alert severity="error">{status.message}</Alert>
         </Box>
       )}
     </Stack>

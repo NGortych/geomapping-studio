@@ -10,8 +10,13 @@ export function GeoJsonExportControl({
   onExport,
 }: GeoJsonExportControlProps) {
   return (
-    <Box>
-      <Button variant="contained" disabled={disabled} onClick={onExport}>
+    <Box sx={{ width: "100%" }}>
+      <Button
+        variant="contained"
+        disabled={disabled}
+        onClick={onExport}
+        fullWidth
+      >
         Export
       </Button>
     </Box>

@@ -1,27 +1,34 @@
-import { Box, Container } from "@mui/material";
-import { useMemo, useState } from "react";
+import {
+  Box,
+  Container,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { useState } from "react";
 
 import { AppShell } from "../../app/layout/AppShell";
 import { useFeatureDataset } from "../../entities/geo-feature/hooks/useFeatureDataset";
-import { DrawingControls } from "../../features/drawing/components/DrawingControls";
 import { useDrawingController } from "../../features/drawing/hooks/useDrawingController";
-import { useDrawingPreviewLayers } from "../../features/drawing/hooks/useDrawingPreviewLayers";
-import { useDrawnGeoJsonLayer } from "../../features/drawing/hooks/useDrawnGeoJsonLayer";
 import { GeoJsonExportControl } from "../../features/geojson-export/components/GeoJsonExportControl";
 import { useGeoJsonExport } from "../../features/geojson-export/hooks/useGeoJsonExport";
 import { GeoJsonImportControl } from "../../features/geojson-import/components/GeoJsonImportControl";
 import { useGeoJsonImport } from "../../features/geojson-import/hooks/useGeoJsonImport";
-import { useImportedGeoJsonLayer } from "../../features/geojson-import/hooks/useImportedGeoJsonLayer";
-import { MapCanvas } from "../../features/map/components/MapCanvas";
-import { useMapViewport } from "../../features/map/hooks/useMapViewport";
-import { TableView } from "../../features/table-view/components/TableView";
-import { ViewModeControl } from "../../features/table-view/components/ViewModeControl";
+import { SearchControl } from "../../features/search/components/SearchControl";
+import { useLocationSearch } from "../../features/search/hooks/useLocationSearch";
+import { FeatureTableView } from "../../features/table-view/components/FeatureTableView";
 import type { ViewMode } from "../../features/table-view/model/types";
-import { StudioToolbar } from "./components/StudioToolbar";
+import { StudioControlPanel } from "./components/StudioControlPanel";
+import { StudioControlsDrawer } from "./components/StudioControlsDrawer";
+import { StudioHeader } from "./components/StudioHeader";
+import { StudioMapPanel } from "./components/StudioMapPanel";
+import { ViewModeControl } from "./components/ViewModeControl";
 
 export function StudioPage() {
+  const theme = useTheme();
+  const isDesktopLayout = useMediaQuery(theme.breakpoints.up("lg"));
   const [viewMode, setViewMode] = useState<ViewMode>("map");
-  const { viewport, handleViewportChange } = useMapViewport();
+  const [isControlsDrawerOpen, setIsControlsDrawerOpen] = useState(false);
+  const [isDesktopSidebarVisible, setIsDesktopSidebarVisible] = useState(true);
   const {
     importedFeatures,
     drawnFeatures,
@@ -29,96 +36,158 @@ export function StudioPage() {
     setImportedFeatures,
     addDrawnFeature,
   } = useFeatureDataset();
-  const importedGeoJsonLayer = useImportedGeoJsonLayer(importedFeatures);
-  const drawnGeoJsonLayer = useDrawnGeoJsonLayer(drawnFeatures);
   const { sourceUrl, setSourceUrl, status, handleImport } = useGeoJsonImport({
     onImportSuccess: setImportedFeatures,
   });
   const { canExport, handleExport } = useGeoJsonExport(drawnFeatures);
   const {
+    query,
+    setQuery,
+    status: searchStatus,
+    searchResult,
+    handleSearch,
+  } = useLocationSearch({
+    onSearchSuccess: () => {
+      setViewMode("map");
+    },
+  });
+  const {
     positions,
     canFinish,
     isDrawing,
-    startDrawing,
-    cancelDrawing,
+    enableDrawingMode,
+    disableDrawingMode,
+    clearDraft,
     addPoint,
     finishDrawing,
   } = useDrawingController({
     onDrawComplete: addDrawnFeature,
   });
-  const drawingPreviewLayers = useDrawingPreviewLayers({
-    isDrawing,
-    positions,
-  });
-  const mapLayers = useMemo(
-    () =>
-      [importedGeoJsonLayer, drawnGeoJsonLayer, ...drawingPreviewLayers].filter(
-        Boolean,
-      ),
-    [drawnGeoJsonLayer, drawingPreviewLayers, importedGeoJsonLayer],
+  const controlsPanel = (
+    <StudioControlPanel
+      viewModeControl={
+        <ViewModeControl viewMode={viewMode} onViewModeChange={setViewMode} />
+      }
+      searchControl={
+        <SearchControl
+          query={query}
+          status={searchStatus}
+          onQueryChange={setQuery}
+          onSearch={handleSearch}
+        />
+      }
+      importControl={
+        <GeoJsonImportControl
+          sourceUrl={sourceUrl}
+          status={status}
+          onSourceUrlChange={setSourceUrl}
+          onImport={handleImport}
+        />
+      }
+      exportControl={
+        <GeoJsonExportControl disabled={!canExport} onExport={handleExport} />
+      }
+    />
   );
 
   return (
     <AppShell
       header={
-        <StudioToolbar
-          viewModeControl={
-            <ViewModeControl
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-            />
+        <StudioHeader
+          showMobileControlsButton={!isDesktopLayout}
+          onOpenControls={() => setIsControlsDrawerOpen(true)}
+          isDesktopSidebarVisible={isDesktopSidebarVisible}
+          onToggleDesktopSidebar={() =>
+            setIsDesktopSidebarVisible((currentValue) => !currentValue)
           }
-          importControl={
-            <GeoJsonImportControl
-              sourceUrl={sourceUrl}
-              status={status}
-              onSourceUrlChange={setSourceUrl}
-              onImport={handleImport}
-            />
-          }
-          drawingControls={
-            <DrawingControls
-              isDrawing={isDrawing}
-              pointCount={positions.length}
-              canFinish={canFinish}
-              onStartPolygon={startDrawing}
-              onFinish={finishDrawing}
-              onCancel={cancelDrawing}
-            />
-          }
-          exportControl={
-            <GeoJsonExportControl
-              disabled={!canExport}
-              onExport={handleExport}
-            />
-          }
+          isDrawingModeEnabled={isDrawing}
+          onToggleDrawingMode={() => {
+            if (isDrawing) {
+              disableDrawingMode();
+              return;
+            }
+
+            enableDrawingMode();
+            setViewMode("map");
+          }}
         />
       }
       content={
-        <Container
-          maxWidth={false}
-          sx={{
-            height: "100%",
-            px: { xs: 2, md: 3 },
-            py: { xs: 2, md: 3 },
-          }}
-        >
-          {viewMode === "map" ? (
-            <Box sx={{ height: "calc(100dvh - 163px)", minHeight: 520 }}>
-              <MapCanvas
-                viewport={viewport}
-                onViewportChange={handleViewportChange}
-                onMapClick={addPoint}
-                isDrawing={isDrawing}
-                layers={mapLayers}
-              />
+        <>
+          <StudioControlsDrawer
+            open={isControlsDrawerOpen}
+            onClose={() => setIsControlsDrawerOpen(false)}
+          >
+            {controlsPanel}
+          </StudioControlsDrawer>
+
+          <Container
+            maxWidth={false}
+            sx={{
+              height: "100%",
+              px: { xs: 2, md: 3 },
+              py: { xs: 2, md: 3 },
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                alignItems: "stretch",
+                height: "calc(100dvh - 120px)",
+                minHeight: 520,
+              }}
+            >
+              {isDesktopLayout && isDesktopSidebarVisible ? (
+                <Box
+                  sx={{
+                    width: 360,
+                    flexShrink: 0,
+                    height: "100%",
+                    overflow: "auto",
+                    pr: 0.5,
+                  }}
+                >
+                  {controlsPanel}
+                </Box>
+              ) : null}
+
+              <Box
+                sx={{
+                  position: "relative",
+                  flex: 1,
+                  minWidth: 0,
+                  minHeight: 0,
+                  transition: "width 180ms ease",
+                }}
+              >
+                <StudioMapPanel
+                  importedFeatures={importedFeatures}
+                  drawnFeatures={drawnFeatures}
+                  searchResult={searchResult}
+                  isDrawingModeEnabled={isDrawing}
+                  canFinishDrawing={canFinish}
+                  drawingPositions={positions}
+                  onMapClick={addPoint}
+                  onCancelDrawingDraft={clearDraft}
+                  onFinishDrawing={finishDrawing}
+                  isVisible={viewMode === "map"}
+                />
+
+                {viewMode === "table" ? (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      inset: 0,
+                    }}
+                  >
+                    <FeatureTableView features={allFeatures} />
+                  </Box>
+                ) : null}
+              </Box>
             </Box>
-          ) : (
-            <Box sx={{ height: "calc(100dvh - 163px)", minHeight: 520 }}>
-              <TableView features={allFeatures} />
-            </Box>
-          )}
-        </Container>
+          </Container>
+        </>
       }
     />
   );

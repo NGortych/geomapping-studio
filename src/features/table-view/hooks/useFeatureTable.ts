@@ -31,7 +31,7 @@ const BASE_COLUMNS: GridColDef[] = [
   },
 ];
 
-export function useTable(features: Feature[]) {
+export function useFeatureTable(features: Feature[]) {
   const propertyColumns = useMemo(
     () => buildPropertyColumns(features),
     [features],

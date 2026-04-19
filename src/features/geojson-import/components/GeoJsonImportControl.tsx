@@ -18,18 +18,27 @@ export function GeoJsonImportControl({
   const isLoading = status.state === "loading";
 
   return (
-    <Stack spacing={1} sx={{ width: 300 }}>
-      <Box sx={{ display: "flex", gap: 1 }}>
+    <Stack spacing={1.25} sx={{ width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          flexDirection: { xs: "column", sm: "row" },
+        }}
+      >
         <TextField
           fullWidth
           size="small"
-          label="GeoJSON URL"
           placeholder="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
           value={sourceUrl}
           onChange={(event) => onSourceUrlChange(event.target.value)}
           disabled={isLoading}
         />
-        <Button variant="contained" onClick={onImport} disabled={isLoading}>
+        <Button
+          variant="outlined"
+          onClick={onImport}
+          disabled={isLoading || !sourceUrl}
+        >
           Import
         </Button>
       </Box>

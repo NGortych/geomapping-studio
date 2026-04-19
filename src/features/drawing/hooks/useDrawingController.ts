@@ -15,21 +15,25 @@ export function useDrawingController({
 }: UseDrawingControllerOptions) {
   const [mode, setMode] = useState<DrawingMode>("idle");
   const [positions, setPositions] = useState<GeoPosition[]>([]);
+  const isDrawingModeEnabled = mode === "draw-polygon";
 
-  const canFinish = mode === "draw-polygon" && positions.length >= 3;
+  const canFinish = isDrawingModeEnabled && positions.length >= 3;
 
-  function startDrawing() {
+  function enableDrawingMode() {
     setMode("draw-polygon");
-    setPositions([]);
   }
 
-  function cancelDrawing() {
+  function disableDrawingMode() {
     setMode("idle");
     setPositions([]);
   }
 
+  function clearDraft() {
+    setPositions([]);
+  }
+
   function addPoint(position: GeoPosition) {
-    if (mode === "idle") {
+    if (!isDrawingModeEnabled) {
       return;
     }
 
@@ -51,7 +55,6 @@ export function useDrawingController({
       properties: {},
     });
 
-    setMode("idle");
     setPositions([]);
   }
 
@@ -59,9 +62,11 @@ export function useDrawingController({
     mode,
     positions,
     canFinish,
-    isDrawing: mode !== "idle",
-    startDrawing,
-    cancelDrawing,
+    hasDraft: positions.length > 0,
+    isDrawing: isDrawingModeEnabled,
+    enableDrawingMode,
+    disableDrawingMode,
+    clearDraft,
     addPoint,
     finishDrawing,
   };

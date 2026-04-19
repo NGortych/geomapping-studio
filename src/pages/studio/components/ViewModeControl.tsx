@@ -2,7 +2,7 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import TableRowsOutlinedIcon from "@mui/icons-material/TableRowsOutlined";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
-import type { ViewMode } from "../model/types";
+import type { ViewMode } from "../../../features/table-view/model/types";
 
 type ViewModeControlProps = {
   viewMode: ViewMode;
@@ -17,15 +17,23 @@ export function ViewModeControl({
     <ToggleButtonGroup
       exclusive
       value={viewMode}
-      onChange={(_, viewMode: ViewMode) => {
-        onViewModeChange(viewMode);
+      fullWidth
+      size="small"
+      onChange={(_, nextViewMode: ViewMode | null) => {
+        if (!nextViewMode) {
+          return;
+        }
+
+        onViewModeChange(nextViewMode);
       }}
     >
-      <ToggleButton value="map">
+      <ToggleButton value="map" sx={{ gap: 1 }}>
         <MapOutlinedIcon />
+        Map
       </ToggleButton>
-      <ToggleButton value="table">
+      <ToggleButton value="table" sx={{ gap: 1 }}>
         <TableRowsOutlinedIcon />
+        Table
       </ToggleButton>
     </ToggleButtonGroup>
   );

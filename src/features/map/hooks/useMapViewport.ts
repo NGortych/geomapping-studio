@@ -8,6 +8,10 @@ export function useMapViewport(
 ) {
   const [viewport, setViewport] = useState<MapViewport>(initialViewport);
 
+  const focusViewport = useCallback((nextViewport: MapViewport) => {
+    setViewport(nextViewport);
+  }, []);
+
   const handleViewportChange = useCallback((nextViewport: MapViewport) => {
     setViewport(nextViewport);
   }, []);
@@ -15,6 +19,7 @@ export function useMapViewport(
   return {
     viewport,
     setViewport,
+    focusViewport,
     handleViewportChange,
   };
 }
