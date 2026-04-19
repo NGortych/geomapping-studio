@@ -10,7 +10,7 @@ export function useSearchResultLayer(searchResult: SearchResult | null) {
     }
 
     return new ScatterplotLayer({
-      id: "search-result-layer",
+      id: "SearchResultLayer",
       data: [searchResult],
       pickable: false,
       stroked: false,

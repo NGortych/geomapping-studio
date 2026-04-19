@@ -16,6 +16,7 @@ export function GeoJsonImportControl({
   onImport,
 }: GeoJsonImportControlProps) {
   const isLoading = status.state === "loading";
+  const isImportDisabled = isLoading || sourceUrl.trim().length === 0;
 
   return (
     <Stack spacing={1.25} sx={{ width: "100%" }}>
@@ -33,11 +34,16 @@ export function GeoJsonImportControl({
           value={sourceUrl}
           onChange={(event) => onSourceUrlChange(event.target.value)}
           disabled={isLoading}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !isImportDisabled) {
+              onImport();
+            }
+          }}
         />
         <Button
           variant="outlined"
           onClick={onImport}
-          disabled={isLoading || !sourceUrl}
+          disabled={isImportDisabled}
         >
           Import
         </Button>

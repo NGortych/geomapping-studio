@@ -15,6 +15,8 @@ export function SearchControl({
   onQueryChange,
   onSearch,
 }: SearchControlProps) {
+  const isSearchDisabled = status.state === "loading" || query.trim().length === 0;
+
   return (
     <Stack spacing={1.25} sx={{ width: "100%" }}>
       <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
@@ -24,11 +26,16 @@ export function SearchControl({
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
           placeholder="Search location"
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !isSearchDisabled) {
+              onSearch();
+            }
+          }}
         />
         <Button
           variant="outlined"
           onClick={onSearch}
-          disabled={status.state === "loading" || !query}
+          disabled={isSearchDisabled}
           sx={{ whiteSpace: "nowrap" }}
         >
           Search

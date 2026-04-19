@@ -20,9 +20,11 @@ export function useImportedGeoJsonLayer(importedFeatures: Feature[]) {
       getFillColor: [255, 0, 0, 150],
       getLineColor: [255, 0, 0, 220],
       getPointRadius: 6,
-      getLineWidth: 10,
-      lineWidthMinPixels: 3,
-      pointRadiusMinPixels: 5,
+      getLineWidth: 12,
+      lineWidthMinPixels: 4,
+      pointRadiusMinPixels: 6,
+      radiusMinPixels: 8,
+      getRadius: 10,
     });
   }, [importedFeatures]);
 }
