@@ -21,7 +21,7 @@ export function DrawingControls({
     <Stack spacing={1}>
       <Stack direction="row" spacing={1}>
         <Button
-          variant={"contained"}
+          variant="contained"
           onClick={onStartPolygon}
           disabled={isDrawing}
         >
